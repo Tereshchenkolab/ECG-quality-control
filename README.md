@@ -22,7 +22,7 @@ Automated Detection of Non-physiological Artifacts on ECG Signal
 
 •	Luke Witzigreuter
 
-•	Larisa G. Tereshchenko tereshl@ccf.org	          
+•	Prof. Larisa G. Tereshchenko tereshl@ccf.org	          
 
 
 **MATLAB Code**
