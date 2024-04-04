@@ -235,5 +235,18 @@ for iFile = 1:numel(FileList);
 
 end
 
+%To save all these results in excel sheet with ecg names of all ECGs, then ECGs with artifacts and ECGs with lead reversal 
+            ECG_id_all=regname_all';
+            ECG_id_artifacts=regnameC1';
+            ECG_id_leadreversal=regnameC2';
+
+
+            xlRange = 'A2';
+            x2Range = 'B2';
+            x3Range = 'C2';
+            sheet = 2;
+            xlswrite('Results.xls',['All';ECG_id_all],sheet,xlRange);
+            xlswrite('Results.xls',['Artifacts';ECG_id_artifacts],sheet,x2Range);
+            xlswrite('Results.xls',['Leadreversal';ECG_id_leadreversal],sheet,x3Range);
 
 
