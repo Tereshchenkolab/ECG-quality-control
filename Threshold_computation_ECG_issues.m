@@ -6,9 +6,9 @@ clc; close all; clear all
 % we implemented and validated this code on UK biobank and CRIC databases
 
 
-fs=500; %sampling frequency
+fs=500; %sampling frequency; don't change it; Note: please convert different frequency data to 500Hz to use this algorithm
+Ampr=5; %amplitude resolution for UKB (5uV); change this value based on the amplitude resolution
 
-% mainfolder = 'H:\Postdoc data\Databases\UKB\main_uk_database'; %folder with .mat files
 mainfolder = 'H:\Postdoc data\Databases\UKB\test'; %Input ECG data in .mat format
 FileList = dir(fullfile(mainfolder, '*.mat')); 
 addpath(genpath(pwd)); %this function will add folder and subfolder in matlab path
@@ -71,6 +71,7 @@ meanfreq_all=cell2mat(meanfreqI');
 [bV6,idxV6,outliersV6] = deleteoutliers_std((AmplitudeDiff_all(:,12)),0.05); %lead V6
 
 Th_H=[max(bI),max(bII),max(bV1),max(bV2),max(bV3),max(bV4),max(bV5),max(bV6)];%threshold to identify high voltage based outliers if AmpDiff of any ECG is greater than Th_H
+Th_H=Th_H*5/Ampr; %for UKB, threshold remains the same because Ampr for UKB is 5uV
 
 
 %compute threshold for high mean frequency based outliers
@@ -99,6 +100,7 @@ ThLleadV5=abs(prctile((AmplitudeDiff_all_abs(:,11)),10)-iqr((AmplitudeDiff_all_a
 ThLleadV6=abs(prctile((AmplitudeDiff_all_abs(:,12)),10)-iqr((AmplitudeDiff_all_abs(:,12)))) %for lead I
 
 Th_L=[ThLleadI,ThLleadII,ThLleadV1,ThLleadV2,ThLleadV3,ThLleadV4,ThLleadV5,ThLleadV6];%threshold to identify low amplitude outliers if ampDiff of any ECG is less than Th_L
+Th_L=Th_L*5/Ampr; %for UKB, threshold remains the same because Ampr for UKB is 5uV
 
 % Now compute threshold for correlation coefficient based threshold
 %Note: we suggested to first exclude above mentioned outliers and then
@@ -180,7 +182,7 @@ CCabs=abs(cell2mat(rho_all'));
 [bV6,idxV6,outliersV6] = deleteoutliers_std((CCabs(:,8)),0.05);
 
 CCTh=[min(bI),min(bII),min(bV1),min(bV2),min(bV3),min(bV4),min(bV5),min(bV6)];
-Th_CC=abs(CCTh-prctile(CCTh,95)); %threshold to identify lead reversal issues if abs(rho) of any ECG is less than Th_CC
+Th_CC=abs(CCTh-mean(CCabs)); %threshold to identify lead reversal issues if abs(rho) of any ECG is less than Th_CC, subtract mean CCabs of each lead from CCTh of that particular lead
 
 
 %save HV, LV, meanFreq and CC-based thresholds in matfiles
