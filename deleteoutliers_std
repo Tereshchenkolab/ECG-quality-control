@@ -73,7 +73,7 @@ function [b,idx,outliers] = deleteoutliers_std(a,alpha,rep);
 %    (Thanks to Valeri Makarov for modification suggestion.)
 
 %Modified 03/01/2024 by Hassaan A. Bukhari to use 2*std in our examples
-
+% Anyone can use this code but Hassaan A. Bukhari already taken permission from the author (Dr Brett Shoelson, Ph.D) of this code to modify this code and then add it to github and then in the paper by citing it.
 
 
 if nargin == 1
