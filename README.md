@@ -12,17 +12,25 @@ Automated Detection of Non-physiological Artifacts on ECG Signal
 
 **Authors**
 
-•	Hassaan A. Bukhari, PhD bukhars7@ccf.org	
+•	Hassaan A. Bukhari, bukhars7@ccf.org	
 
 •	Shivangi Kewalramani
+
+•	Luke Witzigreuter
 
 •	Jafar Pourbemany
 
 •	Natalia Amadio
 
-•	Luke Witzigreuter
+•	Hernan Rincon-Choles
 
-•	Prof. Larisa G. Tereshchenko tereshl@ccf.org	          
+•	Panduranga Rao
+
+•	 Zeenat Bhat
+
+•	Elsayed Z. Soliman
+
+•	Larisa G. Tereshchenko, tereshl@ccf.org	          
 
 
 **MATLAB Code**
@@ -31,10 +39,16 @@ Automated Detection of Non-physiological Artifacts on ECG Signal
 
 Then, “plot_non_physiological_ECGs_wrt_computed_Thresholds.m” File in the repository plots non-physiological ECG artifacts (high voltage, low voltage, high mean frequency-based outliers) and then ECGs with lead reversal by using threshold values computed in "Threshold_computation_UKB_issues.m" file.
 
+Please Note: If someone want to directly validate our algorithm on CRIC data (by having complete CRIC dataset) using UKB thresholds then please use following code (which is exactly similar to the above shown code file i.e. “plot_non_physiological_ECGs_wrt_computed_Thresholds.m” but by using UKB thresholds (the ones shown in Table I, III, and V of manuscript). For Table I and V: Threshold are shown in 'mV' unit so we used it in samples and then multiplied it with 5 because UKB has amplitude resolution of 5uV and CRIC has 1uV. 
+For example, threshold for 'lead I' in Table I is 4.62mV (equal to 923.36 in samples) and then if we multiplied 923.6 with 5 (amp resolution in UKB) then we will get 4616.8 (~4617) so we used 4617 (similarly for other leads).
+
+"plot_non_physiological_ECGs_wrt_computed_Thresholds_for_CRIC.m" File plots non-physiological CRIC-based ECG artifacts (high voltage, low voltage, high mean frequency-based outliers) and then non-physiological CRIC-based ECGs with lead reversal by using UKB thresholds
 
 **Test files**
 
 18 different test files (having 12 lead ECGs in each file) with sampling rate 500Hz.
+
+
 
 
 **References**
