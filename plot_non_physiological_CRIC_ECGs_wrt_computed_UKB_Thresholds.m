@@ -57,7 +57,8 @@ for iFile = 1:numel(FileList);
     %I, III, and V.
     %Please note (for Table I and V): Threshold are shown in 'mV' unit so
     %we used it in samples and then multiplied it with 5 because UKB has
-    %amplitude resolution of 5uV and CRIC has 1uV
+    %amplitude resolution of 5uV and CRIC has 1uV;  
+    %For example, threshold for 'lead I' in Table I is 4.62mV (equal to 923.36 in samples) and then if we multiplied 923.6 with 5 (amp resolution in UKB) then we will get 4616.8 (~4617) so we used 4617 (similarly for other leads and thresholds).
 
     if (max(abs(ecg(1:1000,1)))-min(abs(ecg(1:1000,1))))<40 || (max(abs(ecg(1001:2000,1)))-min(abs(ecg(1001:2000,1))))<40 || (max(abs(ecg(2001:3000,1)))-min(abs(ecg(2001:3000,1))))<40 || (max(abs(ecg(3001:4000,1)))-min(abs(ecg(3001:4000,1))))<40 || (max(abs(ecg(4001:end,1)))-min(abs(ecg(4001:end,1))))<40 ||...
        (max(abs(ecg(1:1000,2)))-min(abs(ecg(1:1000,2))))<30 || (max(abs(ecg(1001:2000,2)))-min(abs(ecg(1001:2000,2))))<30 || (max(abs(ecg(2001:3000,2)))-min(abs(ecg(2001:3000,2))))<30 || (max(abs(ecg(3001:4000,2)))-min(abs(ecg(3001:4000,2))))<30 || (max(abs(ecg(4001:end,2)))-min(abs(ecg(4001:end,2))))<30 ||...
