@@ -2,14 +2,15 @@ clc; close all; clear all
 
 %This code computes threshold values for high voltage, low voltage and
 %high mean frequency based outliers and lead reversal issues from any ECG
-%data
+%data as listed in Tables I, III, V, VII. In addition to that, this code will also compute mean and standard deviations as listed in Tables II, IV, VI and VIII
 % we implemented and validated this code on UK biobank and CRIC databases
 
 
 fs=500; %sampling frequency; don't change it; Note: please convert different frequency data to 500Hz to use this algorithm
 Ampr=5; %amplitude resolution for UKB (5uV); change this value based on the amplitude resolution
 
-mainfolder = 'H:\Postdoc data\Databases\UKB\test'; %Input ECG data in .mat format
+% mainfolder = 'H:\Postdoc data\Databases\UKB\main_uk_database'; %folder with .mat files
+mainfolder = 'H:\Postdoc data\My_papers\Paper1_UKB issues\upload to Git\test'; %Input ECG data in .mat format
 FileList = dir(fullfile(mainfolder, '*.mat')); 
 addpath(genpath(pwd)); %this function will add folder and subfolder in matlab path
 LeadOrder={'I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'};
@@ -57,6 +58,9 @@ meanfreq_all=cell2mat(meanfreqI');
 
 
 
+
+
+
 %compute threshold for high voltage based outliers for 8 independent leads,
 %if someone wants to compute it for 12 leads then you can add all the 12
 %leads in following code
@@ -71,7 +75,33 @@ meanfreq_all=cell2mat(meanfreqI');
 [bV6,idxV6,outliersV6] = deleteoutliers_std((AmplitudeDiff_all(:,12)),0.05); %lead V6
 
 Th_H=[max(bI),max(bII),max(bV1),max(bV2),max(bV3),max(bV4),max(bV5),max(bV6)];%threshold to identify high voltage based outliers if AmpDiff of any ECG is greater than Th_H
-Th_H=Th_H*5/Ampr; %for UKB, threshold remains the same because Ampr for UKB is 5uV
+Th_H=Th_H*5/Ampr; %for UKB as in Table I, threshold remains the same because Ampr for UKB is 5uV
+
+%To compute results as shown in Table II
+AmplitudeDiff_8leads=AmplitudeDiff_all(:,[1,2,7:12]);
+% AmplitudeDiff_8leads=cell2mat(AmplitudeDiffAll(:,[2,3,8:13]));
+%before removal of outliers
+mean_ampDiff_before_outliers_removal=mean(AmplitudeDiff_8leads).*0.005;
+STD_ampDiff_before_outliers_removal=std(AmplitudeDiff_8leads).*0.005;
+
+%only for outliers
+for i=[1:8]
+AmplitudeDiff_8leads_1=AmplitudeDiff_8leads(:,i);
+ampDiffoutlier1=AmplitudeDiff_8leads_1(AmplitudeDiff_8leads_1>Th_H(i)); %outliers are those which are greater than Th_H
+mean_ampDiff_only_outliers(i)=mean(ampDiffoutlier1).*0.005;
+mean_ampDiff_only_outliers(i)=std(ampDiffoutlier1).*0.005;
+end
+
+%after removal of outliers
+for i=[1:8]
+AmplitudeDiff_8leads_1=AmplitudeDiff_8leads(:,i);
+ampDiffoutlier1=AmplitudeDiff_8leads_1(AmplitudeDiff_8leads_1<Th_H(i)); %outliers are those which are greater than Th_H
+mean_ampDiff_without_outliers(i)=mean(ampDiffoutlier1).*0.005;
+mean_ampDiff_without_outliers(i)=std(ampDiffoutlier1).*0.005;
+end
+
+
+
 
 
 %compute threshold for high mean frequency based outliers
@@ -86,7 +116,33 @@ Th_H=Th_H*5/Ampr; %for UKB, threshold remains the same because Ampr for UKB is 5
 
 mFTh=[max(bI),max(bII),max(bV1),max(bV2),max(bV3),max(bV4),max(bV5),max(bV6)];
 
-Th_MF=median(mFTh);%threshold to identify high frequency based outliers if meanFreq of any ECG is greater than Th_MF
+Th_MF=median(mFTh);%threshold  as in Table III to identify high frequency based outliers if meanFreq of any ECG is greater than Th_MF
+
+
+%To compute results as shown in Table IV
+meanfreq_8leads=(meanfreq_all(:,[1,2,7:12]));
+% AmplitudeDiff_8leads=cell2mat(AmplitudeDiffAll(:,[2,3,8:13]));
+%before removal of outliers
+mean_freq_before_outliers_removal=mean(meanfreq_8leads);
+STD_freq_before_outliers_removal=std(meanfreq_8leads);
+
+%only for outliers
+for i=[1:8]
+meanfreq_8leads_1=meanfreq_8leads(:,i);
+meanfreqoutlier1=meanfreq_8leads_1(meanfreq_8leads_1>Th_MF); %outliers are those which are greater than Th_H
+mean_freq_only_outliers(i)=mean(meanfreqoutlier1);
+std_freq_only_outliers(i)=std(meanfreqoutlier1);
+end
+
+%after removal of outliers
+for i=[1:8]
+meanfreq_8leads_1=meanfreq_8leads(:,i);
+meanfreqoutlier1=meanfreq_8leads_1(meanfreq_8leads_1<Th_MF); %outliers are those which are greater than Th_H
+mean_freq_without_outliers(i)=mean(meanfreqoutlier1);
+std_freq_without_outliers(i)=std(meanfreqoutlier1);
+end
+
+
 
 %compute threshold for low voltage based outliers
 
@@ -100,7 +156,33 @@ ThLleadV5=abs(prctile((AmplitudeDiff_all_abs(:,11)),10)-iqr((AmplitudeDiff_all_a
 ThLleadV6=abs(prctile((AmplitudeDiff_all_abs(:,12)),10)-iqr((AmplitudeDiff_all_abs(:,12)))) %for lead I
 
 Th_L=[ThLleadI,ThLleadII,ThLleadV1,ThLleadV2,ThLleadV3,ThLleadV4,ThLleadV5,ThLleadV6];%threshold to identify low amplitude outliers if ampDiff of any ECG is less than Th_L
-Th_L=Th_L*5/Ampr; %for UKB, threshold remains the same because Ampr for UKB is 5uV
+Th_L=Th_L*5/Ampr; %for UKB as in Table V, threshold remains the same because Ampr for UKB is 5uV
+
+
+%To compute results as shown in Table VI
+AmplitudeDiff_abs_8leads=AmplitudeDiff_all_abs(:,[1,2,7:12]);
+% AmplitudeDiff_8leads=cell2mat(AmplitudeDiffAll(:,[2,3,8:13]));
+%before removal of outliers
+mean_ampDiff_abs_before_outliers_removal=mean(AmplitudeDiff_abs_8leads).*0.005;
+STD_ampDiff_abs_before_outliers_removal=std(AmplitudeDiff_abs_8leads).*0.005;
+
+%only for outliers
+for i=[1:8]
+AmplitudeDiff_abs_8leads_1=AmplitudeDiff_abs_8leads(:,i);
+ampDiffoutlier1=AmplitudeDiff_abs_8leads_1(AmplitudeDiff_abs_8leads_1>Th_L(i)); %outliers are those which are greater than Th_H
+mean_ampDiff_abs_only_outliers(i)=mean(ampDiffoutlier1).*0.005;
+mean_ampDiff_abs_only_outliers(i)=std(ampDiffoutlier1).*0.005;
+end
+
+%after removal of outliers
+for i=[1:8]
+AmplitudeDiff_abs_8leads_1=AmplitudeDiff_abs_8leads(:,i);
+ampDiffoutlier1=AmplitudeDiff_abs_8leads_1(AmplitudeDiff_abs_8leads_1<Th_L(i)); %outliers are those which are greater than Th_H
+mean_ampDiff_abs_without_outliers(i)=mean(ampDiffoutlier1).*0.005;
+mean_ampDiff_abs_without_outliers(i)=std(ampDiffoutlier1).*0.005;
+end
+
+
 
 % Now compute threshold for correlation coefficient based threshold
 %Note: we suggested to first exclude above mentioned outliers and then
@@ -182,8 +264,30 @@ CCabs=abs(cell2mat(rho_all'));
 [bV6,idxV6,outliersV6] = deleteoutliers_std((CCabs(:,8)),0.05);
 
 CCTh=[min(bI),min(bII),min(bV1),min(bV2),min(bV3),min(bV4),min(bV5),min(bV6)];
-Th_CC=abs(CCTh-mean(CCabs)); %threshold to identify lead reversal issues if abs(rho) of any ECG is less than Th_CC, subtract mean CCabs of each lead from CCTh of that particular lead
+Th_CC=abs(CCTh-mean(CCabs)); %threshold  as in Table VII to identify lead reversal issues if abs(rho) of any ECG is less than Th_CC, subtract mean CCabs of each lead from CCTh of that particular lead
 
+%To compute results as shown in Table VIII
+CCabs_8leads=CCabs;
+% AmplitudeDiff_8leads=cell2mat(AmplitudeDiffAll(:,[2,3,8:13]));
+%before removal of outliers
+mean_CCabs_before_outliers_removal=mean(CCabs_8leads);
+STD_CCabs_before_outliers_removal=std(CCabs_8leads);
+
+%only for outliers
+for i=[1:8]
+CCabs_8leads_1=CCabs_8leads(:,i);
+ampDiffoutlier1=CCabs_8leads_1(CCabs_8leads_1>Th_CC(i)); %outliers are those which are greater than Th_H
+mean_CCabs_only_outliers(i)=mean(ampDiffoutlier1);
+mean_CCabs_only_outliers(i)=std(ampDiffoutlier1);
+end
+
+%after removal of outliers
+for i=[1:8]
+CCabs_8leads_1=CCabs_8leads(:,i);
+ampDiffoutlier1=CCabs_8leads_1(CCabs_8leads_1<Th_CC(i)); %outliers are those which are greater than Th_H
+mean_CCabs_without_outliers(i)=mean(ampDiffoutlier1);
+mean_CCabs_without_outliers(i)=std(ampDiffoutlier1);
+end
 
 %save HV, LV, meanFreq and CC-based thresholds in matfiles
 save("Threshold_HV.mat","Th_H") % save high voltage based threshold
