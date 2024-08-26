@@ -5,35 +5,21 @@ Automated Detection of Non-physiological Artifacts on ECG Signal
 
 **Table of Content**
 
-•	MATLAB Code
+•	MATLAB Code developed by H. Bukhari
 
-•	Test file
+•	STATA Code developed by L. Tereshchenko
+
+
 
 
 **Authors**
 
 •	Hassaan A. Bukhari, bukhars7@ccf.org	
 
-•	Shivangi Kewalramani
-
-•	Luke Witzigreuter
-
-•	Jafar Pourbemany
-
-•	Natalia Amadio
-
-•	Hernan Rincon-Choles
-
-•	Panduranga Rao
-
-•	 Zeenat Bhat
-
-•	Elsayed Z. Soliman
-
 •	Larisa G. Tereshchenko, tereshl@ccf.org	          
 
 
-**MATLAB Code**
+**MATLAB Code developed by H. Bukhari**
 
 “Threshold_computation_UKB_issues.m” file in the repository used to compute threshold values for high voltage or low voltage or high mean frequency-based artifacts and then to choose threshold value for ECG with lead reversal. Here, we modified the already existing criteria, proposed by Grubbs as described in [1] and implemented in [2] to identify outliers. For identifying lead reversal issues, we modified Kors et al. approach [3].
 
